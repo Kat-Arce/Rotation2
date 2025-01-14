@@ -30,11 +30,13 @@ VlnPlot(xenium.obj, features = c("nFeature_Xenium", "nCount_Xenium"), ncol = 2, 
 #To run on my mac I increased max size for globals to 8 GB (or more if needed)
 options(future.globals.maxSize = 8 * 1024^3)  # Set to 8GB
 
-#Process the data
+#Normalize the data. Can do SCTransform or Normalize+Scale Data, whichever memory allows
 xenium.obj <- SCTransform(xenium.obj, assay = "Xenium") 
+
 xenium.obj <- NormalizeData(xenium.obj) 
 xenium.obj <- ScaleData(xenium.obj, assay = "Xenium")
 
+#Below generates clusters needed for UMAPs + Feature Plots
 xenium.obj <- RunPCA(xenium.obj, npcs = 30, features = rownames(xenium.obj))
 xenium.obj <- RunUMAP(xenium.obj, dims = 1:30)
 xenium.obj <- FindNeighbors(xenium.obj, reduction = "pca", dims = 1:30)
@@ -49,11 +51,13 @@ xenium.obj <- readRDS("/path/where/to/save/xenium_object.rds")
 #Below runs the view of the UMAP
 DimPlot(xenium.obj) + ggtitle("UMAP Plot of X")
 
-#UMAP Feature Plots for transcripts of interest
+#UMAP Feature Plots for transcripts of interest, replace with your fave
 FeaturePlot(xenium.obj, features = c("Wasf1")) 
 
-#Image Feature Plots for transcripts of interest
+#Image Feature Plots for transcripts of interest, replace with your fave
 ImageFeaturePlot(xenium.obj, features = c("Wasf1"), cols = c("white", "red"))
 
 #used this function to show how many cells per cluster there are to explain weird graphs for certain clusters
 table(Idents(xenium.obj))
+
+###END###
